@@ -185,15 +185,52 @@
     VENTAS_TOTALES DESC;
 
 13 - ¿QUE SEGMENTO GENERA MAS GANANCIAS?
-
-
-
+    SELECT 
+    C.SEGMENT, 
+    ROUND(SUM(V.PROFIT),2) 
+        AS GANACIAS_TOTALES 
+    FROM CLIENTES_SS C 
+    JOIN VENTAS_SS V 
+        ON V.CUSTOMER_ID = C.CUSTOMER_ID 
+    GROUP BY 
+    C.SEGMENT 
+    ORDER BY 
+    GANACIAS_TOTALES  DESC;
 
 
 14 - ¿QUE PORCENTAJE DE GANANCIAS APORTA CADA SEGMENTO?
-    
-    ¿Qué segmento genera más ganancias?
-    ¿Qué segmento realiza más órdenes?
-    ¿Cuál es el promedio de ventas por segmento?
+    SELECT 
+    C.SEGMENT, 
+    ROUND(SUM(V.PROFIT),2) 
+        AS GANACIAS_TOTALES,
+	ROUND(SUM(V.PROFIT) * 100.0/
+        SUM(SUM(v.PROFIT)) OVER (),2)
+        AS PORCENTAJE
+    FROM CLIENTES_SS C 
+    JOIN VENTAS_SS V 
+        ON V.CUSTOMER_ID = C.CUSTOMER_ID 
+    GROUP BY 
+    C.SEGMENT 
+    ORDER BY 
+    GANACIAS_TOTALES  DESC;
+
+15 - ¿QUE SEGMENTO REALIZO MAS ORDENES?
+    SELECT 
+    SEGMENT,
+    COUNT (V.ORDER_ID) 
+    AS CANTIDAD_DE_ORDENES,
+    ROUND (COUNT (V.ORDER_ID) * 100 /
+    SUM(COUNT(V.ORDER_ID)) OVER (),2) --- “Toma cada conteo por grupo y súmalos todos para obtener el total general”
+        AS PORCENTAJE_ORDENES
+    FROM CLIENTES_SS C
+    JOIN VENTAS_SS V
+        ON V.CUSTOMER_ID = C.CUSTOMER_ID
+    GROUP BY 
+        SEGMENT
+    ORDER BY 
+        CANTIDAD_DE_ORDENES DESC;
+
+16 - ¿CUAL ES EL PROMEDIO DE VENTAS POR SEGMENTO?
+
 
 
