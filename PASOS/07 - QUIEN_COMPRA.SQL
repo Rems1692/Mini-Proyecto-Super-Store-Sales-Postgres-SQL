@@ -71,20 +71,20 @@
     LIMIT 10;
 
 6 - ¿QUIÉNES SON LOS 10 CLIENTES CON MENOS GANANCIAS?
-    SELECT
-    C.CUSTOMER_ID,
-    C.CUSTOMER_NAME,
-    TO_CHAR(SUM(V.PROFIT), '9G999G999D99')
-        AS GANANCIAS_TOTALES
-    FROM CLIENTES_SS C
-    JOIN VENTAS_SS V
-        ON V.CUSTOMER_ID = C.CUSTOMER_ID
-    GROUP BY
+        SELECT
         C.CUSTOMER_ID,
-        C.CUSTOMER_NAME
-    ORDER BY
-        GANANCIAS_TOTALES
-    LIMIT 10;
+        C.CUSTOMER_NAME,
+        TO_CHAR(SUM(V.PROFIT), '9G999G999D99')
+            AS GANANCIAS_TOTALES
+        FROM CLIENTES_SS C
+        JOIN VENTAS_SS V
+            ON V.CUSTOMER_ID = C.CUSTOMER_ID
+        GROUP BY
+            C.CUSTOMER_ID,
+            C.CUSTOMER_NAME
+        ORDER BY
+            GANANCIAS_TOTALES
+        LIMIT 10;
 
 
 7 - ¿QUIÉNES COMPRARON MÁS UNIDADES?                                                                                            
