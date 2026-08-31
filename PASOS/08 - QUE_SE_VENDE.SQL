@@ -251,6 +251,17 @@ JOIN PRODUCTOS_SSL P ON V.PRODUCT_ID = P.PRODUCT_ID
 GROUP BY P.CATEGORY
 ORDER BY VENTA_PROMEDIO_POR_UNIDAD DESC;
 
+18 - ¿QUÉ CATEGORÍA GENERA MÁS INGRESO POR UNIDAD VENDIDA?
+SELECT
+    P.CATEGORY,
+    SUM(V.QUANTITY) AS CANTIDAD_VENDIDAS,
+    ROUND(SUM(V.SALES),2) AS VENTAS_T,
+    ROUND(SUM(SALES)/SUM(QUANTITY),2) AS VENTA_PROMEDIO_POR_UNIDAD
+FROM VENTAS_SS V
+JOIN PRODUCTOS_SSL P ON V.PRODUCT_ID = P.PRODUCT_ID
+GROUP BY CATEGORY
+ORDER BY VENTA_PROMEDIO_POR_UNIDAD DESC;
+
 -- Hallazgo: Technology genera ~4 veces más venta por unidad que Office Supplies.
 -- Aunque Office Supplies vende casi 3.3x mas unidades, Technology genera mas
 -- ingreso total porque cada unidad vale mucho mas (producto de mayor precio).
