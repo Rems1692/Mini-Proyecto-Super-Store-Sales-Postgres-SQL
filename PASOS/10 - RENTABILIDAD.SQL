@@ -14,9 +14,12 @@ GROUP BY
 CATEGORY
 ORDER BY VENTAS_TOTALES DESC
 
+-- Furniture vende casi lo mismo que las otras dos categorías, pero su ganancia es 8 veces menor
+
 2 - ¿QUE SUB CATEGORIAS TIENEN LOS PEORES MARGENES DE GANANCIAS EN FURNITURE?
 SELECT
 P.SUB_CATEGORY,
+SUM (V.QUANTITY) AS CANTIDAD_VENDIDAS,
 ROUND(SUM(V.SALES),2) AS VENTAS_TOTALES,
 ROUND (SUM(V.PROFIT),2) AS GANANCIAS_TOTALES,
 ROUND(SUM(V.PROFIT)/SUM(V.SALES)* 100.0,2)
@@ -29,9 +32,15 @@ GROUP BY
 P.SUB_CATEGORY
 ORDER BY VENTAS_TOTALES DESC
 
+--Dentro de Furniture, solo 2 de las 4 subcategorías generan pérdida: Tables (-8.56%) y Bookcases (-3.02%)
+--Furnishings vende la mayor cantidad de unidades (3,563) pero genera las ventas más bajas en dólares ($91,705) de las 4 
+-- Y aun así tiene el mejor margen (14.24%). Es decir, Furnishings son productos de bajo precio unitario pero eficientes, 
+--Mientras que Chairs vende menos unidades pero genera casi 4 veces más ingreso, con margen bastante más bajo 8.10%
+
 3 - ¿EN QUE ESTADOS FURNITURE GENERA PERDIDAS?
 SELECT
 V.STATE,
+SUM (V.QUANTITY) AS CANTIDAD_VENDIDAS,
 ROUND(SUM(SALES),2) AS VENTAS_TOTALES,
 ROUND (SUM(PROFIT),2) AS GANANCIAS_TOTALES,
 ROUND(SUM(PROFIT)/SUM(SALES)* 100.0,2)
@@ -45,6 +54,14 @@ V.STATE
 ORDER BY VENTAS_TOTALES DESC
 LIMIT 10;
 
+--De los 10 estados que más venden Furniture, 5 tienen margen negativo (Texas, Pennsylvania, Illinois, Ohio, Florida) 
+-- Es decir, la mitad de tus estados top en volumen están perdiendo dinero en esta categoría. 
+--El caso más grave es Illinois con -32.10%, seguido de Pennsylvania (-18.29%) y Texas, 
+--que aunque tiene el peor margen en dólares (-$10,436), su % (-17.22%) no es el más severo.
+--El contraste más interesante: California vende casi el doble que New York (1,696 vs 877 unidades) 
+--pero tiene margen más bajo (5.87% vs 6.27%) — mientras que Michigan y Virginia, con mucho menos volumen, logran márgenes de +20%.
+
+
 4 - ¿COMO VARIA EL MARGEN DE LAS SUB CATEGORIAS SEGUN EL RANGO DE DESCUENTOS APLICADO?
 SELECT
 P.SUB_CATEGORY,
@@ -54,6 +71,7 @@ P.SUB_CATEGORY,
 		WHEN DISCOUNT <= 0.4 THEN '21-40%'
 		ELSE '41%+'
 	END AS RANGO_DESCUENTO,
+    SUM (V.QUANTITY) AS CANTIDAD_VENDIDAS,
 	ROUND(SUM(SALES),2) AS VENTAS_TOTALES,
 	ROUND (SUM(PROFIT),2) AS GANANCIAS_TOTALES,
 	ROUND(SUM(PROFIT)/SUM(SALES)* 100.0,2)
@@ -69,9 +87,14 @@ ORDER BY
 RANGO_DESCUENTO,
 P.SUB_CATEGORY;
 
+--las 4 subcategorías, sin excepción: sin descuento, TODAS son rentables (18-27% de margen) 
+--Incluso Tables y Bookcases, que en tu análisis general aparecían con margen negativo.
+--el margen se vuelve negativo apenas se supera el 20% de descuento
+
 5 - ¿CUANTO DINERO SE PIERDE EN LAS SUB CATEGORIAS DE FURNITURE CON DESCUENTOS MAYORES A 21%?
 SELECT
 SUB_CATEGORY,
+SUM (V.QUANTITY) AS CANTIDAD_VENDIDAS,
 ROUND(SUM(PROFIT),2) 
 AS PERDIDA_TOTAL,
 COUNT(DISTINCT ORDER_ID) 
@@ -86,6 +109,12 @@ P.SUB_CATEGORY
 HAVING SUM(PROFIT)<0
 ORDER BY
 PERDIDA_TOTAL ASC;
+
+--Furniture pierde $54,478 en 513 órdenes con descuento mayor a 21%, 
+--Concentrado principalmente en Tables ($30,698, el 56% del total). 
+--Limitar el descuento máximo a 20% en esta categoría —especialmente en Tables, 
+--donde el impacto por unidad es mayor debido a su precio elevado 
+--podría recuperar la mayor parte de esos $54,478 sin afectar el resto de la operación."
 
 6 - ¿CÓMO HA EVOLUCIONADO LA GANANCIA DEL NEGOCIO AÑO A AÑO, Y CUÁL FUE EL PORCENTAJE DE CRECIMIENTO RESPECTO AL AÑO ANTERIOR?
 SELECT 
