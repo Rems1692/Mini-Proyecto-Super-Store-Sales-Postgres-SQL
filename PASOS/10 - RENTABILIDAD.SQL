@@ -214,3 +214,26 @@ GROUP BY CATEGORY
 ORDER BY MARGEN ASC;
 
 --Technology -21.32% (causa: 2 órdenes de Machines con ~45% de descuento promedio)
+
+
+11 - ¿QUÉ SUBCATEGORÍA ESPECÍFICA DE TECHNOLOGY, Y CON QUÉ DESCUENTO PROMEDIO, EXPLICA LA CAÍDA DE MARGEN EN ABRIL 2017?
+SELECT 
+    SUB_CATEGORY,
+	SUM (QUANTITY) AS CANTIDAD_VENDIDAS,
+    COUNT(DISTINCT order_id) AS ORDENES_TOTALES,
+    ROUND(AVG(discount)*100, 2) AS DESCUENTO_PROMEDIO,
+    ROUND(SUM(sales), 2) AS VENTAS_TOTALES,
+    ROUND(SUM(profit), 2) AS GANANCIAS_TOTALES
+FROM ventas_ss v
+JOIN productos_ssl p ON v.product_id = p.product_id
+WHERE category = 'Technology'
+  AND EXTRACT(YEAR FROM ORDER_DATE) = 2017
+  AND EXTRACT(MONTH FROM ORDER_DATE) = 4
+GROUP BY SUB_CATEGORY
+ORDER BY GANANCIAS_TOTALES ASC;
+
+-- Machines fue la unica subcategoria con margen fuertemente negativo (-41.36%),
+-- con solo 2 ordenes (7 unidades) y un descuento promedio de ~45%.
+-- No es un problema estructural de Technology -- es un caso puntual de
+-- 2 transacciones con descuento fuera de lo normal, que distorsiono
+-- el margen de toda la categoria ese mes.
